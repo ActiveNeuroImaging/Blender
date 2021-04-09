@@ -1,6 +1,7 @@
 import nibabel as nb
 import numpy as np
  
+# cifti code based on Christopher J Markiewicz https://nbviewer.jupyter.org/github/neurohackademy/nh2020-curriculum/blob/master/we-nibabel-markiewicz/NiBabel.ipynb
 
 cifti = nb.load('/Users/robleech/Dropbox/HCP_S900_GroupAvg_v1/S900.MyelinMap_BC_MSMAll.32k_fs_LR.dscalar.nii')
 cifti_data = cifti.get_fdata(dtype=np.float32)
