@@ -2,7 +2,7 @@ import nibabel as nb
 import numpy as np
  
 # cifti code based on Christopher J Markiewicz https://nbviewer.jupyter.org/github/neurohackademy/nh2020-curriculum/blob/master/we-nibabel-markiewicz/NiBabel.ipynb
-
+# load cifti file containing the vertexwise values, in this case myelin map from the HCP
 cifti = nb.load('/Users/robleech/Dropbox/HCP_S900_GroupAvg_v1/S900.MyelinMap_BC_MSMAll.32k_fs_LR.dscalar.nii')
 cifti_data = cifti.get_fdata(dtype=np.float32)
 cifti_hdr = cifti.header
@@ -23,8 +23,11 @@ def surf_data_from_cifti(data, axis, surf_name):
 
 left_brain=surf_data_from_cifti(cifti_data, axes[1], 'CIFTI_STRUCTURE_CORTEX_LEFT')
 
+#load gifti surface that is the same resolution/underlying mesh etc as the cifti
 gifti_img_3KBaseBrain = nb.load('/Users/robleech/Dropbox/HCP_S900_GroupAvg_v1/S900.L.pial_MSMAll.32k_fs_LR.surf.gii')
 gifti_img_3KBaseBrain.darrays[0].data.shape
+
+#use gifti to build mesh in blender of the surface
 import bpy
 import bmesh
 vertices = gifti_img_3KBaseBrain.darrays[0].data
@@ -38,17 +41,13 @@ me.update()
 new_object = bpy.data.objects.new('brain', me)
 
 
-#new_collection = bpy.data.collections.new('new_collection')
-#bpy.context.scene.collection.children.link(new_collection)
-# add object to scene collection
 bpy.data.collections[0].objects.link(new_object)
+
+# Use the values from the cifti to paint the vertices on the blender mesh. Lots of ways to vary this.
+
 colorData=left_brain[:]
 colorData[colorData!=0]=colorData[colorData!=0]-colorData[colorData!=0].min()
 C=colorData/colorData.max()
-
-
-
-
 
 if not me.vertex_colors:
     me.vertex_colors.new()
